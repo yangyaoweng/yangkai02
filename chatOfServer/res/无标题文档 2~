@@ -1,0 +1,111 @@
+--3.2进入关卡CMD.mysqlSelectMap032(dbm,dbr,dbrT,client_fd,talk_login)
+    function mysqlSelectMap032(dbm,dbr,dbrT)
+    local a = os.clock() 
+    print("进入关卡")
+    local user03 = {}
+    --得到用户数据
+    local talk_login = {
+      dbrkey = "33:12",
+      pass = 315,
+      engame = "yes",
+    }
+    if talk_login == nil then
+      print("数据为空")
+      return "no",{id = 110}
+    end
+    local mapuser1 = dbr:hget(talk_login.dbrkey,cli_user[14])
+    local los2 = Levels.get(2)
+    local luas = "call mapTableOn02("
+    luas = luas..talk_login.pass ..')'
+    local res = dbm:query(luas)
+    --print(dump(res))
+    --清除之前的关卡物品位置
+    local derls = dbr:exists(mapuser1)
+    if derls == true then
+      print("清除原有数据")
+      local derls = dbr:del(mapuser1)
+      --print(dump(los2.grid))
+    end
+    --产生地图物品位置
+    math.randomseed( tonumber(tostring(os.time()):reverse():sub(1,6)) )
+    local mapSerS = res[1][1]
+    local mapSerK={}
+    local iss = 0
+    local rands = clone(los2.grid)   --保存随机数用于判断是否相同
+    local h = 0
+    local w = 0
+    for k,v in pairs(mapApp) do
+      iss = mapSerS[v]
+      local mapSerV={}
+      while iss ~= 0 do
+        --print(iss)
+        --产生随机数
+        local s = math.random(1,98)
+        h = math.floor(s/los2.cols)+1
+        w = s%los2.cols
+        --print("第一次产生的随机数",s)
+        while (rands[h][w] == 2 or type(rands[h][w]) == "string") do
+          --print("第二次产生的随机数",s)
+          s = math.random(1,98)
+          h = math.floor(s/los2.cols)+1
+          w = s%los2.cols
+        end
+        rands[h][w] = 2;
+        table.insert(mapSerV, {["l"]=h,["c"]=w})
+        local rer = dbr:hset(mapuser1,h..":"..w, k)
+        iss = iss - 1
+      end
+      if 0 ~= mapSerS[v] then
+        mapSerK[v] = mapSerV
+      end
+    end
+    --print("随机数后的关卡信息",dump(rands))
+    rands = nil
+    --print("原有关卡数据:",dump(los2.grid))
+    local maptd = {}
+    table.insert(maptd, mapSerK)
+    user03.maptTrap=maptd
+    --查看用户道具表
+    local itemOn = dbr:hmget(talk_login.dbrkey,1,2,3,4,5 )
+    local trap02 ={}
+    for k,v in pairs(itemOn) do
+      table.insert(trap02,{itemon = k,itemnum = v})
+    end
+    user03.itemtab = trap02
+    --查看当前宠物属性
+    local opens = dbr:hget(talk_login.dbrkey,cli_user[12])
+    local roleOn ={}
+    local rolews = dbr:hmget(opens,tableRoleS[2],tableRoleS[6],tableRoleS[7],tableRoleS[8],tableRoleS[19])
+    table.insert(roleOn,{gameuser = rolews[1],rolekey = opens, life = rolews[2], userLife = rolews[3] ,levelCap = rolews[4], actionVal = rolews[5]})
+    user03.roleuser = roleOn
+    print("地图位置----",dump(user03))
+    
+     --动态数据/行动值/陷阱情况
+    local taskUser = dbr:hmset(mapuser1,gameLevelk[3],gameLevelk[13],gameLevelk[2],gameLevelk[13],gameLevelk[1],gameLevelk[13], gameLevelk[7], mapSerS.treaNum, gameLevelk[8],mapSerS.numTrap, gameLevelk[9],rolews[5], gameLevelk[10],mapSerS.timeS, gameLevelk[11], gameLevelk[13], gameLevelk[11], gameLevelk[13] )
+    local b = os.clock()
+    print(b-a)
+    return "yes",serialize(user03)
+end
+
+-------------------------------------------------------------------
+
+  local i = 0
+  local yang={}
+  for k,v in pairs(user03.maptTrap) do
+    i = i+1
+    print(k,v)
+    print(type(k))
+    local sd=Split(k,':')
+    print("-kk",dump(sd))
+    yang[i] = k
+  end
+  print("-11---",dump(yang))
+
+
+
+
+
+
+
+
+

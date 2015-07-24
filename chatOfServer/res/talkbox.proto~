@@ -1,0 +1,195 @@
+package talkbox;
+message talk_result
+{
+	required int32 id = 1;   		//结果id
+}
+message talk_create
+{
+	required int32 userid = 1;	//角色名id
+	required string name = 2;	//角色名长度
+}
+message talk_users
+{
+	message talk_user
+	{
+		required int32 userid = 1;	//角色名id
+		required string name = 2;	//角色名长度
+	}
+	repeated talk_user users = 1;	//角色列表
+}
+message talk_message
+{
+	required int32 fromuserid = 1;	//角色名id
+	required int32 touserid = 2;	//角色名id
+	required string msg = 3;	//角色名长度
+}
+
+message helloworld
+{
+	required int32 id =1;
+	required string str =2;
+	optional int32 opt =3;
+
+}
+
+//角色对战消息格式
+message TableRoleS{
+	//角色动作
+	enum RoleType {
+  		MOBILE = 1;		//移动
+  		STANDING = 2;	//站立
+  		LEFTLOWER = 3;	//左下
+  		LOWRIGHT = 4;	//右下
+  		UPPERLEFT = 5;	//左上
+  		UPPERRIGHT = 6;	//右上
+  		ALEFT = 7;		//向左
+  		RIGHT = 8;		//向右
+  		TRAP = 9;		//中陷阱
+  		OVER = 10;		//死亡
+	}
+	//陷阱/加血/宝藏种类
+	enum TrapTypes{
+		OBJTRAP = 1;	//尖刺
+		ICETRAP = 2;	//冰冻
+		FIRETRAP = 3;	//火焰
+		ELECTTRAP = 4;	//电网
+		LIFE = 5;		//加血
+		TREASUE = 6;	//宝藏
+
+	}
+	//陷阱等级
+	enum TrapLevel{
+		LEVEL1 = 1;
+		LEVEL2 = 2;
+		LEVEL3 = 3;
+		LEVEL4 = 4;
+		LEVEL5 = 5;
+		LEVEL6 = 6;
+		LEVEL7 = 7;
+		LEVEL8 = 8;
+	}
+	//宠物属性
+	message TableRole{
+		required int32 id = 1;
+		required string name = 2;
+		optional string agename = 3;
+  		required int32 stage = 4;
+		required int32 userLife = 5;
+		required int32 levelCap = 6;
+		required int32 restoreLife = 7;
+		required int32 objTres = 8;
+		required int32 objPati = 9;
+		required int32 iceTres = 10;
+		required int32 icePati = 11;
+		required int32 fireTres = 12;
+		required int32 firePati = 13;
+		required int32 electTres = 14;
+    	required int32 electPati = 15;
+	}
+    repeated TableRole roles = 1;	//宠物列表
+
+    //角色方位
+    message RoleLocation{
+    	required int32 ranksH =1;	//行
+    	required int32 ranksL =2;	//列
+    }
+
+    //获取陷阱
+	message TrapBorn{
+		repeated RoleLocation roleName = 1;
+		repeated TrapTypes trapType = 2;
+		repeated TrapLevel trapLe = 3;
+	}
+	//诞生/陷阱.加血
+    repeated TrapBorn trapLevel = 2;
+
+
+    //角色状态
+    message UserState{
+    	repeated int32 userId = 1;			//用户id
+    	repeated int32 id = 2;				//角色id
+    	repeated RoleType roleBoom = 3;		//角色动作
+    	repeated RoleLocation roleLoc = 4;	//角色方位
+    }
+    repeated UserState userTable = 3;
+}
+
+//关卡信息
+message MapMessage{
+    	repeated int32 stageMumber = 1;		//关卡编号
+    	repeated int32 stageSize = 2;		//关卡尺寸
+    	repeated string mapMumber = 3;		//地图编号
+    	repeated int32 timeMap = 4;			//时间
+    	repeated int32 effEctive =5;		//有效格子数
+    	repeated int32 porTal = 6;			//传送门
+    	repeated int32 treaNumber = 7;		//宝藏份数
+    	repeated int32 objTrap = 8;			//尖刺
+    	repeated int32 iceTrap = 9;			//冰冻
+    	repeated int32 fireTrap = 10;		//火焰
+    	repeated int32 electTrap = 11;		//电网
+    	repeated int32 life = 12;			//生命道具
+}
+
+//道具信息
+message ItemInfo{
+	repeated int32 itemNo = 1;		//道具编号
+	repeated string itemName = 2;	//道具名字
+	repeated string itemDescr = 3;	//道具描述
+	repeated int32 userCurr	= 4;	//萌币
+	repeated int32 diamond = 5;		//钻石
+	repeated string use = 6;		//使用方式
+}
+
+//使用道具
+message ItemUse{
+	repeated int32 itemNo = 1;		//道具编号
+	repeated string itemName = 2;	//道具名字
+}
+
+//点击对战平台
+message GameAgainst{
+	repeated int32 userId = 1;		//用户ID
+	repeated string userName = 2;	//用户名
+	repeated int32 agename = 3;		//宠物id
+}
+
+//对战匹配
+message GameAgeTrue{
+	repeated int32 userId = 1;
+	repeated string userName = 2;	//用户名
+	repeated int32 agename = 3;		//宠物id
+}
+
+//进入对战
+message GameAgeGo{
+	repeated int32 userId1 = 1;
+	repeated string userName1 = 2;	//用户名
+	repeated int32 agename1 = 3;		//宠物id
+	repeated int32 userId2 = 4;
+	repeated string userName2 = 5;	//用户名
+	repeated int32 agename2 = 6;		//宠物id
+}
+//挑战好友下线
+message GameAgeFalse{
+	repeated int32 userId = 1;
+	repeated string userName = 2;	//用户名
+	repeated int32 userId2 = 3;
+	repeated string userName2 = 4;	//好友名
+}
+
+//进入游戏的登录信息
+message GameStart{
+	repeated int32 userId = 1;		//用户id
+	repeated string itemName = 2;	//用户名字
+	repeated int32 passwords = 3;	//用户密码
+}
+
+//用户第一次登录游戏注册
+message GameEntrance{
+	repeated int32 userId = 1;		//用户id
+	repeated string itemName = 2;	//用户名字
+	repeated int32 passwords = 3;	//用户密码
+	repeated string sex = 4;		//性别
+}
+
+//
